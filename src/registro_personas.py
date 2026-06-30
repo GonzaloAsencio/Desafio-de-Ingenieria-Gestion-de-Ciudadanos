@@ -2,6 +2,14 @@ from dataclasses import dataclass
 
 from .persona import Persona
 
+
+@dataclass(frozen=True)
+class Segmentacion:
+    umbral: int
+    menores: list[Persona]
+    mayores_o_iguales: list[Persona]
+
+
 class RegistroPersonas:
     def __init__(self, registros: list[tuple[str, str, str, int]]) -> None:
         self._por_dni: dict[str, Persona] = {}
@@ -17,9 +25,12 @@ class RegistroPersonas:
 
     def __len__(self) -> int:
         return len(self._por_dni)
-    
+
     def formatear(self) -> dict[str, tuple[str, str, int]]:
-        return {dni: (p.nombre, p.apellido, p.edad) for dni, p in self._por_dni.items()}
+        resultado: dict[str, tuple[str, str, int]] = {}
+        for persona in self._por_dni.values():
+            resultado.update(persona.como_diccionario())
+        return resultado
 
     def mayor_edad(self) -> Persona:
         self._exigir_no_vacio()
@@ -48,10 +59,3 @@ class RegistroPersonas:
     def _exigir_no_vacio(self) -> None:
         if not self._por_dni:
             raise ValueError("El registro está vacío")
-
-
-@dataclass(frozen=True)
-class Segmentacion:
-    umbral: int
-    menores: list[Persona]
-    mayores_o_iguales: list[Persona]

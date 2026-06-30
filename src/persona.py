@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class Persona:
     dni: str
     nombre: str
     apellido: str
     edad: int
-
 
     def __post_init__(self) -> None:
         if not isinstance(self.edad, int):
